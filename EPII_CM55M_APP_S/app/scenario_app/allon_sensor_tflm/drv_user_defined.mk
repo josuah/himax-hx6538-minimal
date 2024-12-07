@@ -92,4 +92,3 @@ DRIVERS_IP_INSTANCE  += TIMER6 \
 endif							
 						
 DRIVERS_IP_NS_INSTANCE ?=
-						

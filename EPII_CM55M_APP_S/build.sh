@@ -35,7 +35,6 @@ mkdir -p obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/ 2> /dev/null
 mkdir -p obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/clib/ 2> /dev/null
 mkdir -p obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src// 2> /dev/null
 
-arm-none-eabi-gcc $CFLAGS $DFLAGS -I./include -fmacro-prefix-map="../obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/"=. -MMD -MP -MF"obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/system_WE2_ARMCM55.d" -MT"obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/system_WE2_ARMCM55.o" -MT"obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/system_WE2_ARMCM55.d" -std=gnu11 -o "obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/system_WE2_ARMCM55.o" "src/system_WE2_ARMCM55.c"
 arm-none-eabi-gcc $CFLAGS $DFLAGS -I./include -fmacro-prefix-map="../obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/"=. -MMD -MP -MF"obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/main.d" -MT"obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/main.o" -MT"obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/main.d" -std=gnu11 -o "obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/main.o" "src/main.c"
 
 cp blob/libdriver.a obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/libdriver.a

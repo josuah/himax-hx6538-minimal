@@ -7,6 +7,7 @@
 #include "hx_drv_scu.h"
 #include "hx_drv_uart.h"
 #include "driver_interface.h"
+#include "board.h"
 
 void *_sbrk_r() { return NULL; }
 void _exit() { return 0; }
@@ -174,3 +175,95 @@ const VECTOR_TABLE_Type __VECTOR_TABLE[496] __VECTOR_TABLE_ATTRIBUTE = {
 	   Interrupt9_Handler /*   9 Interrupt 9 */
 	   /* Interrupts 10 .. 480 are left out */
 };
+
+uint32_t SystemCoreClock = SYSTEM_CLOCK;
+
+volatile unsigned long g_time_loop = 0;
+
+void SystemCoreClockInit(void)
+{
+	uint32_t val = SysTick_LOAD_RELOAD_Msk+1;
+	SystemCoreClock = SYSTEM_CLOCK;
+	g_time_loop = 0;
+#if !defined(ENABLE_OS) && !defined(RTE_CMSIS_RTOS2) && !defined(RTE_RTOS_FreeRTOS_CORE)
+	//SYSTICK MAX
+	if (SysTick_Config(val)) {
+
+		while (1)
+			;
+	}
+#endif
+}
+
+void SystemCoreClockUpdate(uint32_t clock) {
+	uint32_t val = SysTick_LOAD_RELOAD_Msk+1;
+	SystemCoreClock = clock;
+	g_time_loop = 0;
+#if !defined(ENABLE_OS) && !defined(RTE_CMSIS_RTOS2) && !defined(RTE_RTOS_FreeRTOS_CORE)
+	//SYSTICK MAX
+	if (SysTick_Config(val)) {
+
+		while (1)
+			;
+	}
+#endif
+}
+
+/**
+ \brief  Get Current Tick.
+
+ */
+void SystemGetTick(uint32_t *systick, uint32_t *loop_cnt)
+{
+	*systick = SysTick->VAL;
+	*loop_cnt = g_time_loop;
+}
+
+#if !defined(HX_TFM)
+
+void SystemInit(void) {
+
+#if defined (__VTOR_PRESENT) && (__VTOR_PRESENT == 1U)
+  SCB->VTOR = (uint32_t)(&__VECTOR_TABLE[0]);
+#endif
+
+#if (defined (__FPU_USED) && (__FPU_USED == 1U)) || \
+    (defined (__ARM_FEATURE_MVE) && (__ARM_FEATURE_MVE > 0U))
+  SCB->CPACR |= ((3U << 10U*2U) |           /* enable CP10 Full Access */
+                 (3U << 11U*2U)  );         /* enable CP11 Full Access */
+#if defined (__ARM_FEATURE_CMSE) &&  (__ARM_FEATURE_CMSE == 3U)
+  SCB_NS->CPACR |= ((3U << 10U*2U) |           /* enable CP10 Full Access */
+                 (3U << 11U*2U)  );         /* enable CP11 Full Access */
+#endif
+#endif
+	SCB->SHCSR |= (1 << SCB_SHCSR_MEMFAULTENA_Pos);
+	SCB->SHCSR |= (1 << SCB_SHCSR_BUSFAULTENA_Pos);
+	SCB->SHCSR |= (1 << SCB_SHCSR_USGFAULTENA_Pos);
+#if defined (__ARM_FEATURE_CMSE) &&  (__ARM_FEATURE_CMSE == 3U)
+  SCB->SHCSR |= (1 << SCB_SHCSR_SECUREFAULTENA_Pos);
+#endif
+
+#ifdef UNALIGNED_SUPPORT_DISABLE
+  SCB->CCR |= SCB_CCR_UNALIGN_TRP_Msk;
+#endif
+
+// Enable Loop and branch info cache
+	SCB->CCR |= SCB_CCR_LOB_Msk;
+	__ISB();
+
+
+	for(IRQn_Type idx = 0; idx <=200; idx++)
+	{
+		NVIC_DisableIRQ(idx);
+	}
+
+#if defined (__ARM_FEATURE_CMSE) && (__ARM_FEATURE_CMSE == 3U)
+#ifndef TRUSTZONE_SEC_ONLY
+  hx_drv_scu_set_CM55M_IDAU(3, 0, 0, 1);
+#endif
+#endif
+
+  SystemCoreClockInit();
+}
+
+#endif //#if !defined(HX_TFM)

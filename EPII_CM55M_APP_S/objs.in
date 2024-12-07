@@ -4,10 +4,6 @@ obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/console_io.o
 obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/retarget.o
 obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/retarget_io.o
 obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/startup_WE2_ARMCM55.o
-obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/board.o
-obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/pinmux_init.o
-obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/platform_driver_init.o
-obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/allon_sensor_tflm.o
 obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/driver_interface.o
 obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/hardfault_handler.o
 obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/main.o

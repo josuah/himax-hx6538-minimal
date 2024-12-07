@@ -4,17 +4,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
-#include "powermode_export.h"
-#include "WE2_device.h"
-#include "board.h"
 #include "xprintf.h"
-#include "board.h"
-#include "WE2_core.h"
-#include "hx_drv_scu.h"
-#include "hx_drv_swreg_aon.h"
-#include "hx_drv_pmu_export.h"
 #include "hx_drv_pmu.h"
-#include "powermode.h"
 
 #define WE2_CHIP_VERSION_C		0x8538000c
 #define FRAME_CHECK_DEBUG		1

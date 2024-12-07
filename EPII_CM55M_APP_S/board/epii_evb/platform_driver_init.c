@@ -107,55 +107,6 @@ void __attribute__((weak)) platform_driver_init()
 	hx_drv_rtc_init(RTC_ID_2, HX_RTC2_BASE);
 #endif
 #endif
-
-#ifdef IP_2x2
-	hx_drv_hw2x2_init(HW_2X2_BASEADDR);
-#endif
-#ifdef IP_5x5
-	hx_drv_hw5x5_init(HW_5X5_BASEADDR);
-#endif
-#ifdef IP_cdm
-	hx_drv_cdm_init(HW_CDM_BASEADDR);
-#endif
-#ifdef IP_csirx
-	hx_drv_csirx_init(CSIRX_REGS_BASE, CSIRX_DPHY_REG_BASE);
-#endif
-#ifdef IP_csitx
-	hx_drv_csitx_init(CSITX_REGS_BASE, CSITX_DPHY_REG);
-#endif
-#ifdef IP_dp
-	hx_drv_dp_init(HW_DP_BASEADDR, HW_DP_HSC_BASEADDR, HW_HXRGB2YUV_BASEADDR, HW_HXCSC_BASEADDR);
-#endif
-#ifdef IP_edm
-	hx_drv_edm_init_regbase(HW_EDM_BASEADDR, HW_EDM_HSC_BASEADDR);
-#endif
-#ifdef IP_hxautoi2c_mst
-	hx_drv_hxautoi2c_init(HW_HXAUTOI2C_BASE_ADDR);
-#endif
-#ifdef IP_inp
-	hx_drv_inp_init(HW_INP_BASEADDR, HW_INP_HSC_BASEADDR);
-#endif
-#ifdef IP_inp1bitparser
-	hx_drv_inp1bitparser_init(HW_INP1BITPARSER_BASEADDR, HW_INP1BITPARSER_LSC_BASEADDR);
-#endif
-#ifdef IP_inpovparser
-	hx_drv_inpovparser_init(HW_INPOVPARSER_BASEADDR, HW_INPOVPARSER_LSC_BASEADDR);
-#endif
-#ifdef IP_jpeg
-	hx_drv_jpeg_init(HW_JPEG_BASEADDR, HW_JPEG_HSC_BASEADDR);
-#endif
-#ifdef IP_sensorctrl
-	hx_drv_sensorctrl_init(HW_SENSORCTRL_BASEADDR, HW_SENSORCTRL_LSC_BASEADDR);
-#endif
-#ifdef IP_tpg
-	hx_drv_tpg_init_reg_addr(HW_TPG_BASEADDR);
-#endif
-#ifdef IP_xdma
-	hx_drv_xdma_init(HW_XDMA_BASEADDR, HW_XDMA_HSC_BASEADDR);
-#endif
-#ifdef IP_mb
-	hx_drv_mb_init(MB_CORE_CM55M, HX_MAILBOX_INT_BASE);
-#endif
 #ifdef IP_uart
 	#if defined(IP_INST_UART0) || defined(IP_INST_NS_UART0)
 	hx_drv_uart_init(USE_DW_UART_0, HX_UART0_BASE);
@@ -185,50 +136,6 @@ void __attribute__((weak)) platform_driver_init()
 	#endif
 	#if defined(IP_INST_AON_GPIO) || defined(IP_INST_NS_AON_GPIO)
 	hx_drv_gpio_init(GPIO_GROUP_5, HX_GPIO_GROUP_5_BASE);
-	#endif
-#endif
-#ifdef IP_iic
-	#ifndef BOOT_USED
-	#if defined(IP_INST_IIC_HOST) || defined(IP_INST_NS_IIC_HOST)
-	hx_drv_i2cm_init(USE_DW_IIC_0, HX_I2C_HOST_MST_0_BASE, DW_IIC_SPEED_FAST);
-	#endif
-	#if defined(IP_INST_IIC_HOST_SENSOR) || defined(IP_INST_NS_IIC_HOST_SENSOR)
-	hx_drv_i2cm_init(USE_DW_IIC_1, HX_I2C_HOST_MST_1_BASE, DW_IIC_SPEED_FAST);
-	#endif
-	#endif
-	#if defined(IP_INST_IIC_SLAVE0) || defined(IP_INST_NS_IIC_SLAVE0)
-	hx_drv_i2cs_init(USE_DW_IIC_SLV_0, HX_I2C_HOST_SLV_0_BASE);
-	#endif
-	#if defined(IP_INST_IIC_SLAVE1) || defined(IP_INST_NS_IIC_SLAVE1)
-	hx_drv_i2cs_init(USE_DW_IIC_SLV_1, HX_I2C_HOST_SLV_1_BASE);
-	#endif
-#endif
-#ifdef IP_spi
-    #if defined(IP_INST_NS_QSPI_HOST)
-    #error "IP_INST_NS_QSPI_HOST is not Supported"
-    #endif
-    #if defined(IP_INST_NS_OSPI_HOST)
-    #error "IP_INST_NS_QSPI_HOST is not Supported"
-    #endif
-    #if defined(IP_INST_QSPI_HOST)
-    hx_drv_spi_mst_init(USE_DW_SPI_MST_Q, DW_SPI_Q_RELBASE);
-    #endif
-    #if defined(IP_INST_SSPI_HOST) || defined(IP_INST_NS_SSPI_HOST)
-    hx_drv_spi_mst_init(USE_DW_SPI_MST_S, DW_SPI_S_RELBASE);
-    #endif
-    #if defined(IP_INST_OSPI_HOST)
-    hx_drv_spi_mst_init(USE_DW_SPI_MST_O, DW_SPI_O_RELBASE);
-    #endif
-#endif
-#ifdef IP_pwm
-	#if defined(IP_INST_PWM0) || defined(IP_INST_NS_PWM0)
-	hx_drv_pwm_init(PWM0, HW_PWM0_BASEADDR);
-	#endif
-	#if defined(IP_INST_PWM1) || defined(IP_INST_NS_PWM1)
-	hx_drv_pwm_init(PWM1, HW_PWM1_BASEADDR);
-	#endif
-	#if defined(IP_INST_PWM2) || defined(IP_INST_NS_PWM2)
-	hx_drv_pwm_init(PWM2, HW_PWM2_BASEADDR);
 	#endif
 #endif
 }

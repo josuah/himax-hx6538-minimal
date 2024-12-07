@@ -1,20 +1,17 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include "hx_drv_pmu.h"
+#include <string.h>
 #include "hx_drv_scu.h"
 #include "hx_drv_uart.h"
+#include "driver_interface.h"
 
 #define WE2_CHIP_VERSION_C	      0x8538000c
 
 void *_sbrk_r() { return NULL; }
-int _exit() { return 0; }
+void _exit() { return 0; }
 int _read_r() { return 0; }
 int _write_r() { return 0; }
 int _close_r() { return 0; }
@@ -93,4 +90,18 @@ extern void hx_CleanDCache_by_Addr(volatile void *addr, int32_t dsize)
 		}
 		SCB_CleanDCache_by_Addr(addr, dsize);
 	}
+}
+
+DRIVER_INTERFACE_E drv_interface_get_freq(SCU_CLK_FREQ_TYPE_E type, uint32_t *freq)
+{
+	SCU_ERROR_E ret;
+
+	ret = hx_drv_scu_get_freq(type, freq);
+	return (ret == SCU_NO_ERROR) ? DRIVER_INTERFACE_NO_ERROR : DRIVER_INTERFACE_UNKNOWN_ERROR;
+}
+
+DRIVER_INTERFACE_E drv_interface_get_pdlsc_clken_cfg(SCU_PDLSC_CLKEN_CFG_T *cfg)
+{
+	hx_drv_scu_get_pdlsc_clken_cfg(cfg);
+	return DRIVER_INTERFACE_NO_ERROR;
 }

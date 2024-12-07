@@ -117,42 +117,6 @@ void EPII_Get_Systemclock(uint32_t *val)
 	*val = SystemCoreClock;
 }
 
-#ifndef BOOT_USED
-#if !defined(ENABLE_OS) && !defined(RTE_CMSIS_RTOS2) && !defined(RTE_RTOS_FreeRTOS_CORE)
-#define EnablePrivilegedMode() __asm("SVC #0")
-void SVC_Handler_Main_CORE( unsigned int *svc_args )
-{
-  unsigned int svc_number;
-
-  /*
-  * Stack contains:
-  * r0, r1, r2, r3, r12, r14, the return address and xPSR
-  * First argument (r0) is svc_args[0]
-  */
-  svc_number = ( ( char * )svc_args[ 6 ] )[ -2 ] ;
-  switch( svc_number )
-  {
-    case 0:  /* EnablePrivilegedMode */
-      __set_CONTROL( __get_CONTROL( ) & ~CONTROL_nPRIV_Msk ) ;
-      break;
-    default:    /* unknown SVC */
-      break;
-  }
-}
-
-void SVC_Handler(void)
-{
-  __asm(
-    ".global SVC_Handler_Main_CORE\n"
-    "TST lr, #4\n"
-    "ITE EQ\n"
-    "MRSEQ r0, MSP\n"
-    "MRSNE r0, PSP\n"
-    "B SVC_Handler_Main_CORE\n"
-  ) ;
-}
-#endif
-#endif//#ifndef BOOT_USED
 
 void EPII_QSPIXIP_MEM_Attribute_S(uint32_t start_addr, uint32_t end_addr,
 		SPIXIP_MEM_ATT_E mem_att) {
@@ -317,34 +281,6 @@ void EPII_Get_MPU_Region_NS(uint8_t *mpu_region) {
 #endif
 }
 
-#ifndef BOOT_USED
-/**
- \brief  Get ITCM Size
-
- Get ITCM Size.
- */
-void EPII_Get_ITCM_Size(TCM_SZ_E *size) {
-	*size = HX_BIT_GET(ITCMCR_REG, TCMCR_SIZE_Size, TCMCR_SIZE_Pos);
-}
-
-/**
- \brief  Set ITCM Enable
-
- Set ITCM enable.
- */
-void EPII_Set_ITCM_En(uint8_t enable) {
-	HX_BIT_SET(ITCMCR_REG, TCMCR_ENABLE_Size, TCMCR_ENABLE_Pos, enable);
-}
-
-/**
- \brief  Get ITCM Enable
-
- Get ITCM enable.
- */
-void EPII_Get_ITCM_En(uint8_t *enable) {
-	*enable = HX_BIT_GET(ITCMCR_REG, TCMCR_ENABLE_Size, TCMCR_ENABLE_Pos);
-}
-#endif
 /**
  \brief  Set ITGU Error enable
 
@@ -397,34 +333,6 @@ void EPII_Set_ITGU_LUT(uint8_t block_no, TGU_LUT_E lut) {
 void EPII_Get_ITGU_LUT(uint8_t block_no, TGU_LUT_E *lut) {
 	*lut = HX_BIT_GET(ITGU_LUT0_CFG_REG, 1, block_no);
 }
-#ifndef BOOT_USED
-/**
- \brief  Get DTCM Size
-
- Get DTCM Size.
- */
-void EPII_Get_DTCM_Size(TCM_SZ_E *size) {
-	*size = HX_BIT_GET(DTCMCR_REG, TCMCR_SIZE_Size, TCMCR_SIZE_Pos);
-}
-
-/**
- \brief  Set DTCM Enable
-
- Set DTCM enable.
- */
-void EPII_Set_DTCM_En(uint8_t enable) {
-	HX_BIT_SET(DTCMCR_REG, TCMCR_ENABLE_Size, TCMCR_ENABLE_Pos, enable);
-}
-
-/**
- \brief  Get DTCM Enable
-
- Get DTCM enable.
- */
-void EPII_Get_DTCM_En(uint8_t *enable) {
-	*enable = HX_BIT_GET(DTCMCR_REG, TCMCR_ENABLE_Size, TCMCR_ENABLE_Pos);
-}
-#endif
 /**
  \brief  Set DTGU Error enable
 
@@ -477,35 +385,6 @@ void EPII_Set_DTGU_LUT(uint8_t block_no, TGU_LUT_E lut) {
 void EPII_Get_DTGU_LUT(uint8_t block_no, TGU_LUT_E *lut) {
 	*lut = HX_BIT_GET(DTGU_LUT0_CFG_REG, 1, block_no);
 }
-#ifndef BOOT_USED
-/**
- \brief  Set systick load
-
- Set systick load
- */
-void EPII_Set_Systick_load(uint32_t tick) {
-	SysTick->LOAD = (uint32_t) tick;
-	SysTick->VAL = 0UL;
-}
-
-/**
- \brief  Set systick load
-
- GSet systick load
- */
-void EPII_Get_Systick_load(uint32_t *load) {
-	*load = SysTick->LOAD;
-}
-
-/**
- \brief  Get systick val
-
- Get systick val
- */
-void EPII_Get_Systick_val(uint32_t *val) {
-	*val = SysTick->VAL;
-}
-#endif
 /**
  \brief  Set systick load
 
@@ -521,95 +400,6 @@ extern void EPII_Set_Systick_enable(uint32_t enable) {
 		SysTick_CTRL_ENABLE_Msk; /* Enable SysTick IRQ and SysTick Timer */
 	}
 }
-#ifndef BOOT_USED
-/**
- \brief  Set CPU Mode
-
- Set CPU Mode
- */
-extern EPII_CORE_RET_E EPII_Set_CPU_Mode(CPU_MODE_E mode)
-{
-	uint32_t current_mode, val;
-	val = __get_CONTROL();
-
-	current_mode = val & CONTROL_nPRIV_Msk;
-	if(current_mode == mode)
-	{
-		return EPII_CORE_RET_SUCCESS;
-	}else{
-		if(mode == CPU_MODE_USER)
-		{
-			val = val | mode;
-			__set_CONTROL(val);
-		}else{
-#if !defined(ENABLE_OS) && !defined(RTE_CMSIS_RTOS2) && !defined(RTE_RTOS_FreeRTOS_CORE)
-			EnablePrivilegedMode();
-#else
-			return EPII_CORE_RET_FAIL;
-#endif
-		}
-	}
-	return EPII_CORE_RET_SUCCESS;
-}
-
-/**
- \brief  Get CPU Mode
-
- Get CPU Mode
- */
-extern void EPII_Get_CPU_Mode(CPU_MODE_E *mode)
-{
-	uint32_t current_mode;
-	current_mode = __get_CONTROL();
-	*mode = current_mode & CONTROL_nPRIV_Msk;
-}
-
-/**
- \brief  Set Stack Sel
-
- Set CPU Mode
- */
-extern EPII_CORE_RET_E EPII_Set_Stack_Sel(STACK_MODE_E mode)
-{
-	uint32_t current_mode, val;
-	val = __get_CONTROL();
-#if 0
-	current_mode = val & CONTROL_nPRIV_Msk;
-	if(current_mode == mode)
-	{
-		return EPII_CORE_RET_SUCCESS;
-	}else{
-		if(mode == CPU_MODE_USER)
-		{
-			val = val | mode;
-			__set_CONTROL(val);
-		}else{
-			g_ori_EPIIcore_svcaddr = __NVIC_GetVector(SVCall_IRQn);
-			EPII_NVIC_SetVector(SVCall_IRQn, &SVC_Handler_Core);
-
-			EnablePrivilegedMode();
-		}
-	}
-#else
-	current_mode = val & (uint32_t)(~CONTROL_SPSEL_Msk);
-	val = val | (mode << CONTROL_SPSEL_Pos);
-	__set_CONTROL(val);
-#endif
-	return EPII_CORE_RET_SUCCESS;
-}
-
-/**
- \brief  Get Stack Sel
-
- Get CPU Mode
- */
-extern void EPII_Get_Stack_Sel(STACK_MODE_E *mode)
-{
-	uint32_t current_mode;
-	current_mode = __get_CONTROL();
-	*mode = (current_mode & CONTROL_SPSEL_Msk) >> CONTROL_SPSEL_Pos;
-}
-#endif//#ifndef BOOT_USED
 /**
  \brief  NVIC Set Vector
 

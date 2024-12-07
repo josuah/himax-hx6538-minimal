@@ -1,4 +1,3 @@
-obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/WE2_core.o
 obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/system_WE2_ARMCM55.o
 obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/startup_WE2_ARMCM55.o
 obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/driver_interface.o

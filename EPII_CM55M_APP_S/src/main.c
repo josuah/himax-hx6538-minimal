@@ -21,17 +21,7 @@ int _lseek_r() { return 0; }
 
 int main(void)
 {
-	SCU_PINMUX_CFG_T pinmux_cfg;
 	DEV_UART *console_uart = hx_drv_uart_get_dev(DW_UART_0_ID);
-	uint32_t freq;
-
-	hx_drv_scu_get_all_pinmux_cfg(&pinmux_cfg);
-	pinmux_cfg.pin_pb0 = SCU_PB0_PINMUX_UART0_RX_1;
-	pinmux_cfg.pin_pb1 = SCU_PB1_PINMUX_UART0_TX_1;
-	hx_drv_scu_set_all_pinmux_cfg(&pinmux_cfg, 1);
-	hx_drv_scu_init();
-	hx_drv_scu_get_freq(SCU_CLK_FREQ_TYPE_HSC_CLK, &freq);
-	SystemCoreClockUpdate(freq);
 
 	hx_drv_uart_init(USE_DW_UART_0, HX_UART0_BASE);
 	console_uart->uart_open(UART_BAUDRATE_921600);
@@ -106,14 +96,14 @@ extern uint32_t __STACK_LIMIT;
 __NO_RETURN void Reset_Handler(void)
 {
 	__set_MSP((uint32_t)(&__INITIAL_SP));
-	   __set_MSPLIM((uint32_t) (&__STACK_LIMIT));
+	__set_MSPLIM((uint32_t) (&__STACK_LIMIT));
 
-	   SystemInit(); /* CMSIS System Initialization */
+	SystemInit(); /* CMSIS System Initialization */
 
-	   SCB_DisableICache();
-	   SCB_DisableDCache();
-	   SCB_EnableICache();
-	   SCB_EnableDCache();
+	SCB_DisableICache();
+	SCB_DisableDCache();
+	SCB_EnableICache();
+	SCB_EnableDCache();
 
 
 	__PROGRAM_START();

@@ -45,14 +45,10 @@ typedef volatile struct dw_uart_reg {
 
 int main(void)
 {
-	DEV_UART *console_uart = hx_drv_uart_get_dev(DW_UART_0_ID);
-
-	hx_drv_uart_init(USE_DW_UART_0, HX_UART0_BASE);
-	console_uart->uart_open(UART_BAUDRATE_921600);
-
 	while (1) {
-		console_uart->uart_write("hello world\n", 12);
+		((DW_UART_REG_PTR)HX_UART0_BASE)->DATA = '\n';
 	}
+
 	return 0;
 }
 

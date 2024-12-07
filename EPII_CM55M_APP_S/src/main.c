@@ -4,10 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "hx_drv_scu.h"
-#include "hx_drv_uart.h"
-#include "driver_interface.h"
-#include "board.h"
+#include "WE2_device_addr.h"
+#include "WE2_ARMCM55.h"
+
+#define HSC_CLK                 24000000U
+#define CM55M_CLK               HSC_CLK
+#define SYSTEM_CLOCK		CM55M_CLK
 
 typedef volatile struct dw_uart_reg {
 	uint32_t DATA;		/*!< data in/out and DLL */
@@ -78,16 +80,6 @@ extern void EPII_NVIC_SetVector(IRQn_Type IRQn, uint32_t vector)
 	}
 }
 
-void hx_set_memory(unsigned int addr, unsigned int val)
-{
-	(*((volatile unsigned int*) addr)) = val;
-}
-
-unsigned int hx_get_memory(unsigned int addr)
-{
-	return (*((volatile unsigned int*) addr));
-}
-
 extern void hx_CleanDCache_by_Addr(volatile void *addr, int32_t dsize)
 {
 	uint32_t dtcm_start = BASE_ADDR_DTCM_ALIAS;
@@ -104,18 +96,6 @@ extern void hx_CleanDCache_by_Addr(volatile void *addr, int32_t dsize)
 		}
 		SCB_CleanDCache_by_Addr(addr, dsize);
 	}
-}
-
-DRIVER_INTERFACE_E drv_interface_get_freq(SCU_CLK_FREQ_TYPE_E type, uint32_t *freq)
-{
-	return hx_drv_scu_get_freq(type, freq) == SCU_NO_ERROR
-		? DRIVER_INTERFACE_NO_ERROR : DRIVER_INTERFACE_UNKNOWN_ERROR;
-}
-
-DRIVER_INTERFACE_E drv_interface_get_pdlsc_clken_cfg(SCU_PDLSC_CLKEN_CFG_T *cfg)
-{
-	hx_drv_scu_get_pdlsc_clken_cfg(cfg);
-	return DRIVER_INTERFACE_NO_ERROR;
 }
 
 extern uint32_t __INITIAL_SP;

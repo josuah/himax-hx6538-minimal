@@ -38,12 +38,8 @@ int main(void)
 	pinmux_cfg.pin_pb0 = SCU_PB0_PINMUX_UART0_RX_1;
 	pinmux_cfg.pin_pb1 = SCU_PB1_PINMUX_UART0_TX_1;
 	hx_drv_scu_set_all_pinmux_cfg(&pinmux_cfg, 1);
-
-	TZ_Set_ALL_Secure();
-
 	hx_drv_scu_init();
 	hx_drv_scu_get_freq(SCU_CLK_FREQ_TYPE_HSC_CLK, &freq);
-
 	SystemCoreClockUpdate(freq);
 
 	hx_drv_uart_init(USE_DW_UART_0, HX_UART0_BASE);

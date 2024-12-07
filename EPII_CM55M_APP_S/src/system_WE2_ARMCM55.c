@@ -145,9 +145,6 @@ void SystemInit(void) {
 	}
 
 #if defined (__ARM_FEATURE_CMSE) && (__ARM_FEATURE_CMSE == 3U)
-#ifdef TRUSTZONE_SEC
-  TZ_SAU_Setup();
-#endif
 #ifndef TRUSTZONE_SEC_ONLY
   hx_drv_scu_set_CM55M_IDAU(3, 0, 0, 1);
 #endif

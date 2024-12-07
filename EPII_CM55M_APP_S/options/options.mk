@@ -158,14 +158,11 @@ include $(EPII_ROOT)/options/toolchain.mk
 ################# Components of EPII ###################################
 # board specific settings
 include $(EPII_ROOT)/options/ic_package.mk
-include $(EPII_ROOT)/device/device.mk
-include $(EPII_ROOT)/board/board.mk
-include $(EPII_ROOT)/linker_script/linker_script.mk
-include $(EPII_ROOT)/drivers/drivers.mk
--include $(EPII_ROOT)/external/external.mk
-include $(EPII_ROOT)/interface/interface.mk
--include $(EPII_ROOT)/cmsis_drivers/cmsis_drivers.mk
--include $(EPII_ROOT)/customer/customer_sec.mk
+include $(EPII_ROOT)/options/device.mk
+include $(EPII_ROOT)/options/board.mk
+include $(EPII_ROOT)/options/linker.mk
+include $(EPII_ROOT)/options/drivers.mk
+include $(EPII_ROOT)/options/interface.mk
 
 # library makefile
 -include $(EPII_ROOT)/library/library.mk

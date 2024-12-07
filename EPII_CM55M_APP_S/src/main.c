@@ -9,15 +9,39 @@
 #include "driver_interface.h"
 #include "board.h"
 
-void *_sbrk_r() { return NULL; }
-void _exit() { return 0; }
-int _read_r() { return 0; }
-int _write_r() { return 0; }
-int _close_r() { return 0; }
-int _fstat_r() { return 0; }
-int _isatty_() { return 0; }
-int _isatty() { return 0; }
-int _lseek_r() { return 0; }
+typedef volatile struct dw_uart_reg {
+	uint32_t DATA;		/*!< data in/out and DLL */
+	uint32_t IER;		/*!< Interrupt enable register and DLH */
+	uint32_t IIR;		/*!< Interrupt Id register and FCR */
+	uint32_t LCR;		/*!< Line control Register */
+	uint32_t MCR;		/*!< Modem control register */
+	uint32_t LSR;		/*!< Line Status Register */
+	uint32_t MSR;		/*!< Modem status Register */
+	uint32_t SCRATCHPAD;	/*!< Uart scratch pad register */
+	uint32_t LPDLL;		/*!< Low Power Divisor Latch (Low) Reg */
+	uint32_t LPDLH;		/*!< Low Power Divisor Latch (High) Reg */
+	uint32_t RES1[2];	/*!< Reserved */
+	uint32_t SHR[16];	/*!< Shadow data register(SRBR and STHR) */
+	uint32_t FAR;		/*!< FIFO Access register */
+	uint32_t TFR;		/*!< Transmit FIFO Read */
+	uint32_t RFW;		/*!< Receive FIFO write */
+	uint32_t USR;		/*!< UART status register */
+	uint32_t TFL;		/*!< Transmit FIFO level */
+	uint32_t RFL;		/*!< Receive FIFO level */
+	uint32_t SRR;		/*!< Software reset register */
+	uint32_t SRTS;		/*!< Shadow request to send */
+	uint32_t SBCR;		/*!< Shadow break control */
+	uint32_t SDMAM;		/*!< Shadow DMA mode */
+	uint32_t SFE;		/*!< Shadow FIFO enable */
+	uint32_t SRT;		/*!< Shadow RCVR Trigger */
+	uint32_t STET;		/*!< Shadow TX empty register */
+	uint32_t HTX;		/*!< Halt TX */
+	uint32_t DMASA;		/*!< DMA Software ACK */
+	uint32_t RES2[18];	/*!< Reserved */
+	uint32_t CPR;		/*!< Camponent parameter register */
+	uint32_t UCV;		/*!< UART Component Version */
+	uint32_t CTR;		/*!< Component typw register */
+} DW_UART_REG, *DW_UART_REG_PTR;
 
 int main(void)
 {
@@ -31,6 +55,16 @@ int main(void)
 	}
 	return 0;
 }
+
+void *_sbrk_r() { return NULL; }
+void _exit() { return 0; }
+int _read_r() { return 0; }
+int _write_r() { return 0; }
+int _close_r() { return 0; }
+int _fstat_r() { return 0; }
+int _isatty_() { return 0; }
+int _isatty() { return 0; }
+int _lseek_r() { return 0; }
 
 extern void EPII_NVIC_SetVector(IRQn_Type IRQn, uint32_t vector)
 {
@@ -78,10 +112,8 @@ extern void hx_CleanDCache_by_Addr(volatile void *addr, int32_t dsize)
 
 DRIVER_INTERFACE_E drv_interface_get_freq(SCU_CLK_FREQ_TYPE_E type, uint32_t *freq)
 {
-	SCU_ERROR_E ret;
-
-	ret = hx_drv_scu_get_freq(type, freq);
-	return (ret == SCU_NO_ERROR) ? DRIVER_INTERFACE_NO_ERROR : DRIVER_INTERFACE_UNKNOWN_ERROR;
+	return hx_drv_scu_get_freq(type, freq) == SCU_NO_ERROR
+		? DRIVER_INTERFACE_NO_ERROR : DRIVER_INTERFACE_UNKNOWN_ERROR;
 }
 
 DRIVER_INTERFACE_E drv_interface_get_pdlsc_clken_cfg(SCU_PDLSC_CLKEN_CFG_T *cfg)
@@ -176,8 +208,9 @@ void SystemCoreClockInit(void)
 	g_time_loop = 0;
 
 	if (SysTick_Config(val)) {
-		while (1)
-			;
+		while (1) {
+			continue;
+		}
 	}
 }
 
@@ -187,8 +220,9 @@ void SystemCoreClockUpdate(uint32_t clock) {
 	g_time_loop = 0;
 
 	if (SysTick_Config(val)) {
-		while (1)
-			;
+		while (1) {
+			continue;
+		}
 	}
 }
 

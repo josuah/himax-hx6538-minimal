@@ -8,8 +8,6 @@
 #include "hx_drv_uart.h"
 #include "driver_interface.h"
 
-#define WE2_CHIP_VERSION_C	      0x8538000c
-
 void *_sbrk_r() { return NULL; }
 void _exit() { return 0; }
 int _read_r() { return 0; }
@@ -59,27 +57,22 @@ extern void EPII_NVIC_SetVector(IRQn_Type IRQn, uint32_t vector)
 	}
 }
 
-void hx_set_memory(unsigned int addr, unsigned int val) {
+void hx_set_memory(unsigned int addr, unsigned int val)
+{
 	(*((volatile unsigned int*) addr)) = val;
 }
 
-unsigned int hx_get_memory(unsigned int addr) {
-	unsigned int val;
-	val = (*((volatile unsigned int*) addr));
-	return val;
+unsigned int hx_get_memory(unsigned int addr)
+{
+	return (*((volatile unsigned int*) addr));
 }
 
 extern void hx_CleanDCache_by_Addr(volatile void *addr, int32_t dsize)
 {
-	uint32_t dtcm_start;
-	uint32_t dtcm_end;
-	uint32_t itcm_start;
-	uint32_t itcm_end;
-
-	dtcm_start = BASE_ADDR_DTCM_ALIAS;
-	dtcm_end = BASE_ADDR_DTCM_ALIAS + DTCM_SIZE;
-	itcm_start = BASE_ADDR_ITCM_ALIAS;
-	itcm_end = BASE_ADDR_ITCM_ALIAS + ITCM_SIZE;
+	uint32_t dtcm_start = BASE_ADDR_DTCM_ALIAS;
+	uint32_t dtcm_end = BASE_ADDR_DTCM_ALIAS + DTCM_SIZE;
+	uint32_t itcm_start = BASE_ADDR_ITCM_ALIAS;
+	uint32_t itcm_end = BASE_ADDR_ITCM_ALIAS + ITCM_SIZE;
 
 	if ((SCB->CCR & SCB_CCR_DC_Msk) != 0U) {
 		if (((uint32_t)addr >= dtcm_start) && ((uint32_t)addr <= dtcm_end)) {
@@ -105,3 +98,79 @@ DRIVER_INTERFACE_E drv_interface_get_pdlsc_clken_cfg(SCU_PDLSC_CLKEN_CFG_T *cfg)
 	hx_drv_scu_get_pdlsc_clken_cfg(cfg);
 	return DRIVER_INTERFACE_NO_ERROR;
 }
+
+extern uint32_t __INITIAL_SP;
+extern uint32_t __STACK_LIMIT;
+
+__NO_RETURN void Reset_Handler(void)
+{
+	__set_MSP((uint32_t)(&__INITIAL_SP));
+	   __set_MSPLIM((uint32_t) (&__STACK_LIMIT));
+
+	   SystemInit(); /* CMSIS System Initialization */
+
+	   SCB_DisableICache();
+	   SCB_DisableDCache();
+	   SCB_EnableICache();
+	   SCB_EnableDCache();
+
+
+	__PROGRAM_START();
+}
+
+__NO_RETURN void Default_Handler(void)
+{
+}
+
+void NMI_Handler(void) __attribute__ ((weak, alias("Default_Handler")));
+void HardFault_Handler(void) __attribute__ ((weak));
+void MemManage_Handler(void) __attribute__ ((weak, alias("Default_Handler")));
+void BusFault_Handler(void) __attribute__ ((weak, alias("Default_Handler")));
+void UsageFault_Handler(void) __attribute__ ((weak, alias("Default_Handler")));
+void SecureFault_Handler(void) __attribute__ ((weak, alias("Default_Handler")));
+void SVC_Handler(void) __attribute__ ((weak, alias("Default_Handler")));
+void DebugMon_Handler(void) __attribute__ ((weak, alias("Default_Handler")));
+void PendSV_Handler(void) __attribute__ ((weak, alias("Default_Handler")));
+void SysTick_Handler(void) __attribute__ ((weak, alias("Default_Handler")));
+void Interrupt0_Handler(void) __attribute__ ((weak, alias("Default_Handler")));
+void Interrupt1_Handler(void) __attribute__ ((weak, alias("Default_Handler")));
+void Interrupt2_Handler(void) __attribute__ ((weak, alias("Default_Handler")));
+void Interrupt3_Handler(void) __attribute__ ((weak, alias("Default_Handler")));
+void Interrupt4_Handler(void) __attribute__ ((weak, alias("Default_Handler")));
+void Interrupt5_Handler(void) __attribute__ ((weak, alias("Default_Handler")));
+void Interrupt6_Handler(void) __attribute__ ((weak, alias("Default_Handler")));
+void Interrupt7_Handler(void) __attribute__ ((weak, alias("Default_Handler")));
+void Interrupt8_Handler(void) __attribute__ ((weak, alias("Default_Handler")));
+void Interrupt9_Handler(void) __attribute__ ((weak, alias("Default_Handler")));
+
+const VECTOR_TABLE_Type __VECTOR_TABLE[496] __VECTOR_TABLE_ATTRIBUTE = {
+	   (VECTOR_TABLE_Type)(&__INITIAL_SP), /*	 Initial Stack Pointer */
+	   Reset_Handler, /*	 Reset Handler */
+	   NMI_Handler, /* -14 NMI Handler */
+	   HardFault_Handler, /* -13 Hard Fault Handler */
+	   MemManage_Handler, /* -12 MPU Fault Handler */
+	   BusFault_Handler, /* -11 Bus Fault Handler */
+	   UsageFault_Handler, /* -10 Usage Fault Handler */
+	   SecureFault_Handler, /*  -9 Secure Fault Handler */
+	   0, /*	 Reserved */
+	   0, /*	 Reserved */
+	   0, /*	 Reserved */
+	   SVC_Handler, /*  -5 SVCall Handler */
+	   DebugMon_Handler, /*  -4 Debug Monitor Handler */
+	   0, /*	 Reserved */
+	   PendSV_Handler, /*  -2 PendSV Handler */
+	   SysTick_Handler, /*  -1 SysTick Handler */
+
+	   /* Interrupts */
+	   Interrupt0_Handler, /*   0 Interrupt 0 */
+	   Interrupt1_Handler, /*   1 Interrupt 1 */
+	   Interrupt2_Handler, /*   2 Interrupt 2 */
+	   Interrupt3_Handler, /*   3 Interrupt 3 */
+	   Interrupt4_Handler, /*   4 Interrupt 4 */
+	   Interrupt5_Handler, /*   5 Interrupt 5 */
+	   Interrupt6_Handler, /*   6 Interrupt 6 */
+	   Interrupt7_Handler, /*   7 Interrupt 7 */
+	   Interrupt8_Handler, /*   8 Interrupt 8 */
+	   Interrupt9_Handler /*   9 Interrupt 9 */
+	   /* Interrupts 10 .. 480 are left out */
+};

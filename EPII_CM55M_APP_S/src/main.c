@@ -21,6 +21,7 @@
 int main(void)
 {
 	SCU_PINMUX_CFG_T pinmux_cfg;
+	DEV_UART *console_uart = hx_drv_uart_get_dev(DW_UART_0_ID);
 	uint32_t wakeup_event;
 	uint32_t wakeup_event1;
 	uint32_t freq;
@@ -38,11 +39,11 @@ int main(void)
 	hx_drv_uart_init(USE_DW_UART_0, HX_UART0_BASE);
 	hx_drv_uart_init(USE_DW_UART_1, HX_UART1_BASE);
 	hx_drv_uart_init(USE_DW_UART_2, HX_UART2_BASE);
-	console_setup(DW_UART_0_ID, UART_BAUDRATE_921600);
-	xprintf_setup();
+
+	console_uart->uart_open(UART_BAUDRATE_921600);
 
 	while (1) {
-		xprintf("wakeup_event=0x%x,WakeupEvt1=0x%x\n", wakeup_event, wakeup_event1);
+		console_uart->uart_write("hello world\n", 12);
 	}
 	return 0;
 }

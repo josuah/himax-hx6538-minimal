@@ -9,4 +9,3 @@ obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/hardfault_handler.o
 obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/main.o
 obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/timer_interface.o
 obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/trustzone_cfg.o
-obj_epii_evb_icv30_bdv10/gnu_epii_evb_WLCSP65/src/xprintf.o

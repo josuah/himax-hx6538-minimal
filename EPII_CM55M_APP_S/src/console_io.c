@@ -54,31 +54,6 @@ int console_putchar(unsigned char chr) {
 	return 0;
 }
 
-/** get one char*/
-int console_getchar(void) {
-    unsigned char data;
-#ifdef MPS2_FVP
-#ifdef SEMIHOST
-    data = getchar();
-#endif
-#else
-
-#ifdef SEMIHOST
-    data = getchar();
-#else
-#ifdef IP_uart
-    if (console_uart == NULL)
-    {
-        return -1;
-    }
-    while(!console_uart->uart_read((void *)(&data), 1)) {}
-#endif
-
-#endif
-#endif
-	return (int) data;
-}
-
 /** xprintf need functions api setup */
 void console_setup(uint32_t uart_id, uint32_t uart_baud_rate) {
 	if (console_setup_flag) {
